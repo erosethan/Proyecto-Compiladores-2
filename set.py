@@ -1,5 +1,4 @@
-selectivas = set(['if', '
-else', 'switch', 'case'])
+selectivas = set(['if', 'else', 'switch', 'case'])
 repetitivas = set(['for', 'while', 'do'])
 tiposDatos = set(['void', 'int', 'float', 'double', 'char'])
 calificadoresTipoDato = set(['short', 'long', 'signed', 'unsigned'])
