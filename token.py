@@ -33,7 +33,7 @@ def tokenIdentificador(expresion):
 		estado = sigEstado
 		indice += 1
 	
-	return ('N', 0)
+	return ('N', 1)
 
 def tokenNumero(expresion):
 	indice = 0
@@ -70,7 +70,124 @@ def tokenNumero(expresion):
 		estado = sigEstado
 		indice += 1
 	
-	return ('N', 0)
+	return ('N', 1)
+
+def tokenOperador(expresion):
+	indice = 0
+	estado = 'P0'
+	
+	while estado != 'Px':
+		sigEstado = 'Px'
+		char = expresion[indice]
+		
+		if estado == 'P0':
+			sigEstado = {
+				'&': 'P1',
+				'|': 'P2',
+				'!': 'P3',
+				'+': 'P4',
+				'-': 'P5',
+				'/': 'P6',
+				'*': 'P7',
+				'%': 'P8',
+				'=': 'P9',
+				'<': 'P10',
+				'>': 'P11'
+			}.get(char, 'Px')
+		
+		if estado == 'P1':
+			if char == '&':
+				return ('&&', 2)
+		
+		if estado == 'P2':
+			if char == '|':
+				return ('||', 2)
+		
+		if estado == 'P3':
+			return {
+				'=': ('!=', 2)
+			}.get(char, ('!', 1))
+		
+		if estado == 'P4':
+			return {
+				'+': ('++', 2),
+				'=': ('+=', 2)
+			}.get(char, ('+', 1))
+		
+		if estado == 'P5':
+			return {
+				'-': ('--', 2),
+				'=': ('-=', 2)
+			}.get(char, ('-', 1))
+		
+		if estado == 'P6':
+			return {
+				'=': ('/=', 2)
+			}.get(char, ('/', 1))
+		
+		if estado == 'P7':
+			return {
+				'=': ('*=', 2)
+			}.get(char, ('*', 1))
+		
+		if estado == 'P8':
+			return {
+				'=': ('%=', 2)
+			}.get(char, ('%', 1))
+		
+		if estado == 'P9':
+			return {
+				'=': ('==', 2)
+			}.get(char, ('=', 1))
+		
+		if estado == 'P10':
+			return {
+				'=': ('<=', 2)
+			}.get(char, ('<', 1))
+		
+		if estado == 'P11':
+			return {
+				'=': ('>=', 2)
+			}.get(char, ('>', 1))
+		
+		estado = sigEstado
+		indice += 1
+	
+	return ('N', 1)
+
+def tokenSimboloEsp(expresion):
+	char = expresion[0]
+	return {
+		'(': ('(', 1),
+		')': (')', 1),
+		'{': ('{', 1),
+		'}': ('}',1),
+		'[': ('[', 1),
+		']': (']', 1),
+		';': (';', 1),
+		',': (',', 1),
+		'.': ('.', 1),
+		':': (':', 1),
+		'#': ('#', 1),
+		"'": ("'", 1),
+		'"': ('"', 1)
+	}.get(char, ('N', 1))
+
+def reconocerToken(expresion):
+	token = tokenNumero(expresion)
+	if token[0] != 'N': return token
+	
+	token = tokenIdentificador(expresion)
+	if token[0] != 'N': return token
+	
+	token = tokenOperador(expresion)
+	if token[0] != 'N': return token
+	
+	return tokenSimboloEsp(expresion)
 
 test = input() + '\n'
-print(tokenIdentificador(test))
+while len(test) > 0:
+	token = reconocerToken(test)
+	test = test[token[1]: len(test)]
+	if token[0] != 'N':
+		print(token)
