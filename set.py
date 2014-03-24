@@ -16,7 +16,7 @@ def pruebaIdentificador(cadena):
 	if cadena in calificadoresTipoDato
 		return 'CALIFICADOR DE TIPO DE DATO'
 	if cadena in preprocesador
-		return 'RETURN'
+		return 'PREPROCESADOR'
 	if cadena in Ireturn
 		return 'RETURN'
 	if cadena in Imain
