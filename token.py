@@ -186,11 +186,19 @@ def reconocerToken(expresion):
 	
 	return tokenSimboloEsp(expresion)
 
+def estaEnAlfabeto(caracter):
+	ascii = ord(caracter)
+	return ( ( ascii >= 0 and ascii <= 35) or 
+				( ascii >= 37 and ascii <= 62 ) or
+				( ascii >= 65 and ascii <= 91 ) or
+				( ascii >= 97 and ascii <= 125 ) or
+				ascii == 93 )
 	
 def main(nEntrada, nSimbolos, nErrores):
 	arcEntrada = open( nEntrada, 'r' )
 	arcSimbolos = open( nSimbolos, 'w' )
 	arcErrores = open( nErrores, 'w' )
+	arcErrores.write('Linea de Error\tSimbolo\n')
 	texto = arcEntrada.read()
 	numLinea = 1
 	while len(texto) > 0:
@@ -199,10 +207,15 @@ def main(nEntrada, nSimbolos, nErrores):
 		if texto[0] == '\n':
 			print(numLinea)
 			numLinea = numLinea + 1
+		car = texto[0]
 		texto = texto[token[1]: len(texto)]
+		print(car)
+		if( not(estaEnAlfabeto(car)) ):
+			arcErrores.write( car + '\t\t\t\t' + str(numLinea) + '\n' )
+		print(token)
 		if token[0] != 'N':
 			print(token)
-	
+	arcErrores.close()
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2], sys.argv[3])
