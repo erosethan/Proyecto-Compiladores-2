@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import sys
 
 def esDigito(char):
 	return '0' <= char <= '9'
@@ -185,9 +186,23 @@ def reconocerToken(expresion):
 	
 	return tokenSimboloEsp(expresion)
 
-test = input() + '\n'
-while len(test) > 0:
-	token = reconocerToken(test)
-	test = test[token[1]: len(test)]
-	if token[0] != 'N':
-		print(token)
+	
+def main(nEntrada, nSimbolos, nErrores):
+	arcEntrada = open( nEntrada, 'r' )
+	arcSimbolos = open( nSimbolos, 'w' )
+	arcErrores = open( nErrores, 'w' )
+	texto = arcEntrada.read()
+	numLinea = 1
+	while len(texto) > 0:
+		token = reconocerToken(texto)
+		#Hay que checar si esta en el alfabeto
+		if texto[0] == '\n':
+			print(numLinea)
+			numLinea = numLinea + 1
+		texto = texto[token[1]: len(texto)]
+		if token[0] != 'N':
+			print(token)
+	
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2], sys.argv[3])
