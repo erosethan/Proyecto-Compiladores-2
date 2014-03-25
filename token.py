@@ -78,8 +78,8 @@ def tokenOperador(expresion):
 	indice = 0
 	estado = 'P0'
 	
-	while estado != 'Px':
-		sigEstado = 'Px'
+	while estado != 'P12':
+		sigEstado = 'P12'
 		char = expresion[indice]
 		
 		if estado == 'P0':
@@ -95,7 +95,7 @@ def tokenOperador(expresion):
 				'=': 'P9',
 				'<': 'P10',
 				'>': 'P11'
-			}.get(char, 'Px')
+			}.get(char, 'P12')
 		
 		if estado == 'P1':
 			if char == '&':
@@ -187,75 +187,72 @@ def reconocerToken(expresion):
 	
 	return tokenSimboloEsp(expresion)
 
-def enAlfabeto(caracter):
-	ascii = ord(caracter)
-	return (
-		(ascii >= 0 and ascii <= 35) or 
-		(ascii >= 37 and ascii <= 62) or
-		(ascii >= 65 and ascii <= 91) or
-		(ascii >= 97 and ascii <= 125) or
-		ascii == 93 or ascii == 95
-	)
-				
-def valor(cadena):
+def esEspacio(char):
 	return {
-		'(': 'PARENTESIS-ABIERTO',
-		')': 'PARENTESIS-CERRADO',
-		'{': 'LLAVE-ABIERTA',
-		'}': 'LLAVE-CERRADA',
-		'[': 'CORCHETE-ABIERTO',
-		']': 'CORCHETE-CERRADO',
-		';': 'PUNTO-Y-COMA',
-		',': 'COMA',
-		'.': 'PUNTO',
-		':': 'DOS-PUNTOS',
-		'#': 'NUMERAL',
+		 ' ': True,
+		'\n': True,
+		'\t': True,
+	}.get(char, False)
+
+def valorLexema(cadena):
+	return {
+		 '(': 'PARENTESIS-ABIERTO',
+		 ')': 'PARENTESIS-CERRADO',
+		 '{': 'LLAVE-ABIERTA',
+		 '}': 'LLAVE-CERRADA',
+		 '[': 'CORCHETE-ABIERTO',
+		 ']': 'CORCHETE-CERRADO',
+		 ';': 'PUNTO-Y-COMA',
+		 ',': 'COMA',
+		 '.': 'PUNTO',
+		 ':': 'DOS-PUNTOS',
+		 '#': 'NUMERAL',
 		'\'': 'COMILLA-SIMPLE',
-		'"': 'COMILLA-DOBLE',
+		'"' : 'COMILLA-DOBLE',
 		'++': 'INCREMENTO-POSITIVO',
 		'--': 'INCREMENTO-NEGATIVO',
-		'=': 'ASIGNACION',
+		'=' : 'ASIGNACION',
 		'+=': 'SUMA-ASIGNACION',
 		'-=': 'RESTA-ASIGNACION',
 		'*=': 'MULTIPLICACION-ASIGNACION',
 		'/=': 'DIVISION-ASIGNACION',
 		'if': 'IF',
-		'else': 'ELSE',
-		'switch': 'SWITCH',
-		'case': 'CASE',
-		'for': 'FOR',
-		'while': 'WHILE',
+	  'else': 'ELSE',
+	'switch': 'SWITCH',
+	  'case': 'CASE',
+	   'for': 'FOR',
+	 'while': 'WHILE',
 		'do': 'DO',
 		'&&': 'Y',
 		'||': 'O',
-		'!': 'NEGACION',
+		 '!': 'NEGACION',
 		'!=': 'DIFERENTE',
-		'>': 'MAYOR',
-		'<': 'MENOR',
+		 '>': 'MAYOR',
+		 '<': 'MENOR',
 		'==': 'IGUAL',
 		'>=': 'MAYOR-IGUAL',
 		'<=': 'MENOR-IGUAL',
-		'+': 'SUMA',
-		'-': 'RESTA',
-		'*': 'MULTIPLICACION',
-		'/': 'DIVISION',
-		'%': 'MODULO',
-		'int': 'INT',
-		'float': 'FLOAT',
-		'double': 'DOUBLE',
-		'char': 'CHAR',
-		'void': 'VOID',
-		'short': 'SHORT',
-		'long': 'LONG',
-		'signed': 'SIGNED',
-		'unsigned': 'UNSIGNED',
-		'include': 'INCLUDE',
-		'define': 'DEFINE',
-		'inline': 'INLINE',
-		'return': 'RETURN',
-		'main': 'MAIN'
+		 '+': 'SUMA',
+		 '-': 'RESTA',
+		 '*': 'MULTIPLICACION',
+		 '/': 'DIVISION',
+		 '%': 'MODULO',
+	   'int': 'INT',
+	 'float': 'FLOAT',
+	'double': 'DOUBLE',
+	  'char': 'CHAR',
+	  'void': 'VOID',
+	 'short': 'SHORT',
+	  'long': 'LONG',
+	'signed': 'SIGNED',
+  'unsigned': 'UNSIGNED',
+   'include': 'INCLUDE',
+	'define': 'DEFINE',
+	'inline': 'INLINE',
+	'return': 'RETURN',
+	  'main': 'MAIN'
 	}.get(cadena, cadena)
-	
+
 def componenteLexico(token, cadena):
 	selectivas = set(['if', 'else', 'switch', 'case'])
 	repetitivas = set(['for', 'while', 'do'])
@@ -301,36 +298,41 @@ def componenteLexico(token, cadena):
 	if token == 'I':
 		return 'IDENTIFICADOR'
 	return 'SIMBOLO ESPECIAL'
-	
-	
-def main(nEntrada, nSimbolos, nErrores):
-	arcEntrada = open( nEntrada, 'r' )
-	arcSimbolos = open( nSimbolos, 'w' )
-	arcErrores = open( nErrores, 'w' )
 
-	arcSimbolos.write('%30s %16s %22s\n' % ('Componente Lexico', 'Lexema', 'Valor'))
-	arcErrores.write('%15s %10s\n' % ('Linea de Error', 'Simbolo'))
+def main(nEntrada, nSimbolos, nErrores):
+	arcEntrada = open(nEntrada, 'r')
+	arcErrores = open(nErrores, 'w')
+	arcSimbolos = open(nSimbolos, 'w')
+
+	arcErrores.write('%15s%10s\n' % ('Linea de Error', 'Simbolo'))
+	arcSimbolos.write('%30s%20s%25s\n' % ('Componente Lexico', 'Lexema', 'Valor'))
 	
-	texto = arcEntrada.read()
 	numLinea = 1
+	texto = arcEntrada.read()
 	while len(texto) > 0:
+		char = texto[0]
 		token = reconocerToken(texto)
-		if texto[0] == '\n':
-			print(numLinea)
-			numLinea = numLinea + 1
-		car = texto[0]
+		
+		if char == '\n':
+			numLinea += 1
+			
 		lexema = texto[0: token[1]]
-		if(token[0] != 'N'):
-			arcSimbolos.write('%30s %16s %22s\n' % (componenteLexico(token[0], lexema), lexema, valor(lexema)))
 		texto = texto[token[1]: len(texto)]
-		print(car)
-		if( not(enAlfabeto(car)) ):
-			arcErrores.write('%15s %10s\n' % (str(numLinea), car))
-		print(token)
+		
 		if token[0] != 'N':
-			print(token)
+			arcSimbolos.write('%30s%20s%25s\n' % (componenteLexico(token[0], lexema), lexema, valorLexema(lexema)))
+		elif not esEspacio(char):
+			arcErrores.write('%15s%10s\n' % (str(numLinea), char))
+	
 	arcErrores.close()
 	arcSimbolos.close()
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+	if len(sys.argv) < 2:
+		print('No se ha especificado archivo de entrada')
+	elif len(sys.argv) < 3:
+		print('No se ha especificado archivo de resultados')
+	elif len(sys.argv) < 4:
+		print('No se ha especificado archivo de errores')
+	else:
+		main(sys.argv[1], sys.argv[2], sys.argv[3])
